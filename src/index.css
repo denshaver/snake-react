@@ -1,0 +1,22 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 1000px;
+}
+
+.viewbox {
+  margin: 0 auto;
+  width: 500px;
+  height: 500px;
+  border: 1px solid black;
+  display: grid;
+}
+
+.player {
+  background-color: red;
+}
