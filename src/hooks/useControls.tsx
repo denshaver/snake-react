@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-export type Direction = "right" | "left" | "up" | "down";
+import type { Direction } from "../types/positions";
 
 export default function useControls() {
   const [direction, setDirection] = useState<Direction>("up");
@@ -23,15 +22,19 @@ export default function useControls() {
     switch (pressedKey) {
       case "w":
       case "ArrowUp":
+        if (direction === "down") return;
         return setDirection("up");
       case "s":
       case "ArrowDown":
+        if (direction === "up") return;
         return setDirection("down");
       case "a":
       case "ArrowLeft":
+        if (direction === "right") return;
         return setDirection("left");
       case "d":
       case "ArrowRight":
+        if (direction === "left") return;
         return setDirection("right");
     }
   }
@@ -42,7 +45,7 @@ export default function useControls() {
     return () => {
       document.removeEventListener("keydown", handleDirectionChange);
     };
-  }, []);
+  }, [direction]);
 
   return direction;
 }

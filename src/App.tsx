@@ -1,38 +1,52 @@
 import { useEffect, useState } from "react";
 import useTimer from "./hooks/useTimer";
 import useControls from "./hooks/useControls";
+import type { IEntity } from "./types/entities";
+import {
+  getNewCoordinate,
+  handleNewHeadCoordinate,
+  validateNewCoordinate,
+} from "./lib/movement";
+import Entity from "./components/Entity";
 
 const max_position = 15;
 const startPoint = Math.round(max_position / 2);
-
-console.log(startPoint);
 
 export default function App() {
   const timer = useTimer(750);
   const direction = useControls();
 
-  const [position, setPosition] = useState([startPoint, startPoint]);
-  const [xPosition, yPosition] = position;
+  const [entities, setEntities] = useState<IEntity[]>([
+    {
+      id: "snake-0",
+      position: [startPoint, startPoint],
+      type: "snake",
+    },
+  ]);
+
+  const head = entities.find((e) => e.id === "snake-0");
+
+  if (!head) {
+    return <h2>Something went wrong</h2>;
+  }
+
+  const [xCoordinate, yCoordinate] = head.position;
+
+  const handleMovement = () => {
+    if (timer === 0) return;
+
+    const { coordinate, axis } = getNewCoordinate(
+      direction,
+      xCoordinate,
+      yCoordinate
+    );
+    const newCoordinate = validateNewCoordinate(coordinate, max_position);
+    const newEntities = handleNewHeadCoordinate(entities, newCoordinate, axis);
+    setEntities(newEntities);
+  };
 
   useEffect(() => {
-    if (timer === 0) return;
-    if (direction === "up" || direction === "down") {
-      let newPosition = direction === "up" ? xPosition - 1 : xPosition + 1;
-      if (newPosition >= max_position) {
-        newPosition = 0;
-      } else if (newPosition <= 0) {
-        newPosition = max_position;
-      }
-      setPosition([newPosition, yPosition]);
-    } else {
-      let newPosition = direction === "left" ? yPosition - 1 : yPosition + 1;
-      if (newPosition <= 0) {
-        newPosition = max_position;
-      } else if (newPosition >= max_position) {
-        newPosition = 0;
-      }
-      setPosition([xPosition, newPosition]);
-    }
+    handleMovement();
   }, [timer]);
 
   return (
@@ -44,15 +58,10 @@ export default function App() {
             gridTemplate: `repeat(${max_position}, 1fr) / repeat(${max_position}, 1fr)`,
           }}
         >
-          <div
-            className="player"
-            style={{
-              gridArea: `${xPosition} / ${yPosition} / span 1 / span 1`,
-            }}
-          ></div>
+          {entities.map((entity) => {
+            return <Entity entity={entity} />;
+          })}
         </div>
-
-        <h2>Current direction: {direction}</h2>
       </div>
     </>
   );
