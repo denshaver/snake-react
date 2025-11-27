@@ -8,12 +8,15 @@ import {
   validateNewCoordinate,
 } from "./lib/movement";
 import Entity from "./components/Entity";
+import { generatePointEntity } from "./lib/points";
 
 const max_position = 15;
 const startPoint = Math.round(max_position / 2);
+const moveTimeoutInMs = 500;
 
 export default function App() {
-  const timer = useTimer(750);
+  const timer = useTimer(moveTimeoutInMs);
+  const pointsTimer = useTimer(moveTimeoutInMs * 5);
   const direction = useControls();
 
   const [entities, setEntities] = useState<IEntity[]>([
@@ -45,9 +48,19 @@ export default function App() {
     setEntities(newEntities);
   };
 
+  const handlePointGeneration = () => {
+    if (timer === 0) return;
+    const point = generatePointEntity(entities, max_position);
+    setEntities((prev) => [...prev, point]);
+  };
+
   useEffect(() => {
     handleMovement();
   }, [timer]);
+
+  useEffect(() => {
+    handlePointGeneration();
+  }, [pointsTimer]);
 
   return (
     <>

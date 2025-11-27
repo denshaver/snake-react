@@ -20,3 +20,8 @@
 .player {
   background-color: red;
 }
+
+.point {
+  background-color: greenyellow;
+  border-radius: 50%;
+}

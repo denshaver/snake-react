@@ -1,4 +1,4 @@
-export type EntityType = "snake" | "food";
+export type EntityType = "snake" | "point";
 
 export interface IEntity {
   type: EntityType;
