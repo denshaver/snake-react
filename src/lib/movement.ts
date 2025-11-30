@@ -5,29 +5,28 @@ export function validateNewCoordinate(
   coordinate: number,
   max_position: number
 ) {
-  if (coordinate >= max_position) {
-    return 0;
-  } else if (coordinate <= 0) {
+  if (coordinate > max_position) {
+    return 1;
+  } else if (coordinate < 1) {
     return max_position;
   }
   return coordinate;
 }
 
-export function handleNewHeadCoordinate(
-  entities: IEntity[],
-  coordinate: number,
+export function handleNewHead(
+  oldXCoordinate: number,
+  oldYCoordinate: number,
+  newCoordinate: number,
   axis: Axis
-) {
-  return entities.map((e) => {
-    if (e.id === "snake-0") {
-      const newPosition: [number, number] =
-        axis === "x"
-          ? [coordinate, e.position[1]]
-          : [e.position[0], coordinate];
-      return { ...e, position: newPosition };
-    }
-    return e;
-  });
+): IEntity {
+  return {
+    id: "snake-0",
+    type: "snake",
+    position:
+      axis === "x"
+        ? [newCoordinate, oldYCoordinate]
+        : [oldXCoordinate, newCoordinate],
+  };
 }
 
 export function getNewCoordinate(
@@ -35,7 +34,7 @@ export function getNewCoordinate(
   xCoordinate: number,
   yCoordinate: number
 ) {
-  let coordinate = 0;
+  let coordinate = 1;
   let axis: Axis = "x";
 
   switch (direction) {

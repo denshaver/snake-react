@@ -4,7 +4,7 @@ import useControls from "./hooks/useControls";
 import type { IEntity } from "./types/entities";
 import {
   getNewCoordinate,
-  handleNewHeadCoordinate,
+  handleNewHead,
   validateNewCoordinate,
 } from "./lib/movement";
 import Entity from "./components/Entity";
@@ -12,13 +12,10 @@ import { generatePointEntity } from "./lib/points";
 
 const max_position = 15;
 const startPoint = Math.round(max_position / 2);
-const moveTimeoutInMs = 500;
+const delayMs = 200;
 
 export default function App() {
-  const timer = useTimer(moveTimeoutInMs);
-  const pointsTimer = useTimer(moveTimeoutInMs * 5);
-  const direction = useControls();
-
+  const [count, setCount] = useState(0);
   const [entities, setEntities] = useState<IEntity[]>([
     {
       id: "snake-0",
@@ -26,6 +23,10 @@ export default function App() {
       type: "snake",
     },
   ]);
+
+  const timer = useTimer(delayMs);
+  const pointsTimer = useTimer(delayMs * 10);
+  const { direction, unlockControls } = useControls();
 
   const head = entities.find((e) => e.id === "snake-0");
 
@@ -44,14 +45,40 @@ export default function App() {
       yCoordinate
     );
     const newCoordinate = validateNewCoordinate(coordinate, max_position);
-    const newEntities = handleNewHeadCoordinate(entities, newCoordinate, axis);
-    setEntities(newEntities);
+    const newHeadObject = handleNewHead(
+      xCoordinate,
+      yCoordinate,
+      newCoordinate,
+      axis
+    );
+    checkOverlap(...newHeadObject.position);
+    setEntities((prev) =>
+      prev.map((e) => (e.id === "snake-0" ? newHeadObject : e))
+    );
+    unlockControls();
   };
 
   const handlePointGeneration = () => {
     if (timer === 0) return;
     const point = generatePointEntity(entities, max_position);
     setEntities((prev) => [...prev, point]);
+  };
+
+  const checkOverlap = (headX: number, headY: number) => {
+    const overlapEntity = entities.find((entity) => {
+      return (
+        entity.type === "point" &&
+        entity.position[0] === headX &&
+        entity.position[1] === headY
+      );
+    });
+
+    if (overlapEntity) {
+      setEntities((prev) => {
+        return prev.filter((e) => e.id !== overlapEntity.id);
+      });
+      setCount((prev) => prev + 1);
+    }
   };
 
   useEffect(() => {
@@ -72,9 +99,10 @@ export default function App() {
           }}
         >
           {entities.map((entity) => {
-            return <Entity entity={entity} />;
+            return <Entity key={entity.id} entity={entity} />;
           })}
         </div>
+        <h2>Count: {count}</h2>
       </div>
     </>
   );

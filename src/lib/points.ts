@@ -1,7 +1,7 @@
 import type { IEntity } from "../types/entities";
 
 function getRandomCoordinate(max: number) {
-  return Math.floor(Math.random() * max);
+  return Math.floor(Math.random() * max) + 1; // excluding zero
 }
 
 export const generatePointEntity = (
@@ -12,7 +12,7 @@ export const generatePointEntity = (
   let point: IEntity = {
     type: "point",
     id: "point-x-y",
-    position: [-1, -1],
+    position: [0, 0],
   };
 
   do {

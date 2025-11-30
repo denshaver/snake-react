@@ -3,6 +3,7 @@ import type { Direction } from "../types/positions";
 
 export default function useControls() {
   const [direction, setDirection] = useState<Direction>("up");
+  const [isBlocked, setIsBlocked] = useState(false);
 
   function handleDirectionChange(event: globalThis.KeyboardEvent) {
     const allowedKeys = [
@@ -17,7 +18,9 @@ export default function useControls() {
     ];
     const pressedKey = event.key;
 
-    if (!allowedKeys.includes(pressedKey)) return;
+    if (!allowedKeys.includes(pressedKey) || isBlocked) return;
+
+    setIsBlocked(true);
 
     switch (pressedKey) {
       case "w":
@@ -39,13 +42,17 @@ export default function useControls() {
     }
   }
 
+  function unlockControls() {
+    if (isBlocked) setIsBlocked(false);
+  }
+
   useEffect(() => {
     document.addEventListener("keydown", handleDirectionChange);
 
     return () => {
       document.removeEventListener("keydown", handleDirectionChange);
     };
-  }, [direction]);
+  }, [direction, isBlocked]);
 
-  return direction;
+  return { direction, unlockControls };
 }

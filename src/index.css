@@ -15,10 +15,13 @@
   height: 500px;
   border: 1px solid black;
   display: grid;
+  margin-bottom: 16px;
+  transition: 150ms;
 }
 
 .player {
   background-color: red;
+  border-radius: 15%;
 }
 
 .point {
