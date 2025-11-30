@@ -8,7 +8,7 @@ export const generatePointEntity = (
   entities: IEntity[],
   max_position: number
 ) => {
-  let placed = false;
+  let isValid = false;
   let point: IEntity = {
     type: "point",
     id: "point-x-y",
@@ -24,14 +24,14 @@ export const generatePointEntity = (
     });
 
     if (!overlap) {
-      placed = true;
+      isValid = true;
       point = {
         id: `point-${xCoordinate}-${yCoordinate}`,
         type: "point",
         position: [xCoordinate, yCoordinate],
       };
     }
-  } while (!placed);
+  } while (!isValid);
 
   return point;
 };

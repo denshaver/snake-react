@@ -2,17 +2,14 @@ import { useEffect, useState } from "react";
 import useTimer from "./hooks/useTimer";
 import useControls from "./hooks/useControls";
 import type { IEntity } from "./types/entities";
-import {
-  getNewCoordinate,
-  handleNewHead,
-  validateNewCoordinate,
-} from "./lib/movement";
+import { generateNewHead, handleSnakePartsMovement } from "./lib/movement";
 import Entity from "./components/Entity";
 import { generatePointEntity } from "./lib/points";
+import { getSnakeParts, sortEntitiesById } from "./lib/snake";
 
-const max_position = 15;
+const max_position = 20;
 const startPoint = Math.round(max_position / 2);
-const delayMs = 200;
+const delayMs = 100;
 
 export default function App() {
   const [count, setCount] = useState(0);
@@ -39,22 +36,27 @@ export default function App() {
   const handleMovement = () => {
     if (timer === 0) return;
 
-    const { coordinate, axis } = getNewCoordinate(
+    const newHead = generateNewHead(
       direction,
+      xCoordinate,
+      yCoordinate,
+      max_position
+    );
+    const newSnakeParts = handleSnakePartsMovement(
+      entities,
       xCoordinate,
       yCoordinate
     );
-    const newCoordinate = validateNewCoordinate(coordinate, max_position);
-    const newHeadObject = handleNewHead(
-      xCoordinate,
-      yCoordinate,
-      newCoordinate,
-      axis
-    );
-    checkOverlap(...newHeadObject.position);
-    setEntities((prev) =>
-      prev.map((e) => (e.id === "snake-0" ? newHeadObject : e))
-    );
+    const points = entities.filter((e) => e.type === "point");
+
+    const newEntities = sortEntitiesById([
+      newHead,
+      ...newSnakeParts,
+      ...points,
+    ]);
+
+    setEntities(newEntities);
+    checkPointsOverlap(...newHead.position);
     unlockControls();
   };
 
@@ -64,7 +66,7 @@ export default function App() {
     setEntities((prev) => [...prev, point]);
   };
 
-  const checkOverlap = (headX: number, headY: number) => {
+  const checkPointsOverlap = (headX: number, headY: number) => {
     const overlapEntity = entities.find((entity) => {
       return (
         entity.type === "point" &&
@@ -75,7 +77,17 @@ export default function App() {
 
     if (overlapEntity) {
       setEntities((prev) => {
-        return prev.filter((e) => e.id !== overlapEntity.id);
+        const sortedEntities = sortEntitiesById(prev);
+        const snakeParts = getSnakeParts(sortedEntities);
+        const newPart: IEntity = {
+          id: `snake-${snakeParts.length + 1}`,
+          position: overlapEntity.position,
+          type: "snake",
+        };
+        return [
+          ...sortedEntities.filter((e) => e.id !== overlapEntity.id),
+          newPart,
+        ];
       });
       setCount((prev) => prev + 1);
     }
