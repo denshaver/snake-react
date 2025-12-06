@@ -5,7 +5,7 @@ export default function useControls() {
   const [direction, setDirection] = useState<Direction>("up");
   const [isBlocked, setIsBlocked] = useState(false);
 
-  function handleDirectionChange(event: globalThis.KeyboardEvent) {
+  const handleDirectionChange = (event: globalThis.KeyboardEvent) => {
     const allowedKeys = [
       "w",
       "a",
@@ -22,29 +22,30 @@ export default function useControls() {
 
     setIsBlocked(true);
 
-    switch (pressedKey) {
-      case "w":
-      case "ArrowUp":
-        if (direction === "down") return;
-        return setDirection("up");
-      case "s":
-      case "ArrowDown":
-        if (direction === "up") return;
-        return setDirection("down");
-      case "a":
-      case "ArrowLeft":
-        if (direction === "right") return;
-        return setDirection("left");
-      case "d":
-      case "ArrowRight":
-        if (direction === "left") return;
-        return setDirection("right");
+    if (pressedKey === "w" || pressedKey === "ArrowUp") {
+      if (direction === "down") return;
+      return setDirection("up");
     }
-  }
 
-  function unlockControls() {
+    if (pressedKey === "s" || pressedKey === "ArrowDown") {
+      if (direction === "up") return;
+      return setDirection("down");
+    }
+
+    if (pressedKey === "a" || pressedKey === "ArrowLeft") {
+      if (direction === "right") return;
+      return setDirection("left");
+    }
+
+    if (pressedKey === "d" || pressedKey === "ArrowRight") {
+      if (direction === "left") return;
+      return setDirection("right");
+    }
+  };
+
+  const unlockControls = () => {
     if (isBlocked) setIsBlocked(false);
-  }
+  };
 
   useEffect(() => {
     document.addEventListener("keydown", handleDirectionChange);

@@ -1,7 +1,9 @@
+export type Position = [number, number];
+
 export type EntityType = "snake" | "point";
 
-export interface IEntity {
+export interface Entity {
   type: EntityType;
   id: string;
-  position: [number, number];
+  position: Position;
 }

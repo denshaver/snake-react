@@ -1,10 +1,6 @@
-import type { IEntity } from "../types/entities";
+import type { Entity } from "../types/entities";
 
-interface IEntityProps {
-  entity: IEntity;
-}
-
-export default function Entity({ entity }: IEntityProps) {
+export default function EntityItem({ entity }: { entity: Entity }) {
   return (
     <div
       id={entity.id}

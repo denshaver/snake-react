@@ -9,6 +9,10 @@ export default function Overlay({
   isGameOver,
   handleReturnToMenu,
 }: IOverlayProps) {
+  if (!isGameOver && !isPause) {
+    return null;
+  }
+
   return (
     <div
       className="overlap"
