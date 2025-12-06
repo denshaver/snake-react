@@ -7,14 +7,16 @@ import { handleGameMode } from "../lib/game/handle-game-mode";
 
 export default function Game() {
   const [searchParams] = useSearchParams();
+
   const mode = handleGameMode(searchParams.get("mode"));
+
   const game = useGame(mode);
 
   if (!game) {
     return <h2>Something went wrong</h2>;
   }
 
-  const { togglePause, entities, count, isGameOver, isPause } = game;
+  const { togglePause, entities, score, isGameOver, isPause } = game;
   const maxPosition = gameSettings.maxPosition;
 
   return (
@@ -31,7 +33,7 @@ export default function Game() {
         <Overlay isPause={isPause} isGameOver={isGameOver} />
       </div>
 
-      <Footer mode={mode} count={count} />
+      <Footer mode={mode} score={score} />
     </div>
   );
 }

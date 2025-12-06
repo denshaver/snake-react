@@ -1,15 +1,15 @@
-import type { GameMode } from "../types/layout";
+import type { GameMode } from "../types/game";
 
 interface IFooterProps {
   mode: GameMode;
-  count: number;
+  score: number;
 }
 
-export default function Footer({ mode, count }: IFooterProps) {
+export default function Footer({ mode, score }: IFooterProps) {
   return (
     <div className="footer">
       <h2>Mode: {mode}</h2>
-      <h2>{count} xp</h2>
+      <h2>{score} xp</h2>
     </div>
   );
 }
