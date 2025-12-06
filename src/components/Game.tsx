@@ -1,15 +1,13 @@
 import Overlay from "./Overlay";
-import type { GameMode } from "../types/layout";
 import useGame, { gameSettings } from "../hooks/useGame";
 import EntitiesList from "./EntitiesList";
 import Footer from "./Footer";
+import { useSearchParams } from "react-router";
+import { handleGameMode } from "../lib/game/handle-game-mode";
 
-export interface IGameProps {
-  mode: GameMode;
-  handleReturnToMenu: () => void;
-}
-
-export default function Game({ mode, handleReturnToMenu }: IGameProps) {
+export default function Game() {
+  const [searchParams] = useSearchParams();
+  const mode = handleGameMode(searchParams.get("mode"));
   const game = useGame(mode);
 
   if (!game) {
@@ -20,7 +18,7 @@ export default function Game({ mode, handleReturnToMenu }: IGameProps) {
   const maxPosition = gameSettings.maxPosition;
 
   return (
-    <>
+    <div className="container">
       <div
         className="viewbox"
         style={{
@@ -30,14 +28,10 @@ export default function Game({ mode, handleReturnToMenu }: IGameProps) {
       >
         <EntitiesList entities={entities} />
 
-        <Overlay
-          isPause={isPause}
-          isGameOver={isGameOver}
-          handleReturnToMenu={handleReturnToMenu}
-        />
+        <Overlay isPause={isPause} isGameOver={isGameOver} />
       </div>
 
       <Footer mode={mode} count={count} />
-    </>
+    </div>
   );
 }

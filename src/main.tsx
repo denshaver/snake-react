@@ -1,5 +1,20 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
+import { createBrowserRouter, RouterProvider } from "react-router";
+import Game from "./components/Game.tsx";
+import Menu from "./components/Menu.tsx";
 
-createRoot(document.getElementById("root")!).render(<App />);
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Menu />,
+  },
+  {
+    path: "/play",
+    element: <Game />,
+  },
+]);
+
+createRoot(document.getElementById("root")!).render(
+  <RouterProvider router={router} />
+);

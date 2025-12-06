@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import type { Entity, Position } from "../types/entities";
-import type { GameMode } from "../types/layout";
 import useControls from "./useControls";
 import useTimer from "./useTimer";
 import { getStartingPoint } from "../lib/position/get-starting-point";
@@ -8,6 +7,7 @@ import { handleMovement } from "../lib/position/handle-movement";
 import { checkOverlap } from "../lib/game/check-overlap";
 import { handleOverlap } from "../lib/game/handle-overlap";
 import { generatePoint } from "../lib/game/generate-point";
+import type { GameMode } from "../types/game";
 
 export const gameSettings = {
   maxPosition: 20,
@@ -46,18 +46,18 @@ export default function useGame(mode: GameMode) {
     return null;
   }
 
-  const handleSnakeMovement = () => {
+  const onMovement = () => {
     const { newEntities, newHead } = handleMovement(
       entities,
       head.position,
       direction
     );
 
-    checkPointsOverlap(newEntities, newHead.position);
+    onOverlap(newEntities, newHead.position);
     unlockControls();
   };
 
-  const checkPointsOverlap = (entities: Entity[], headPosition: Position) => {
+  const onOverlap = (entities: Entity[], headPosition: Position) => {
     const overlapEntity = checkOverlap(
       entities.filter((e) => e.id !== "snake-0"),
       headPosition
@@ -88,7 +88,7 @@ export default function useGame(mode: GameMode) {
 
   useEffect(() => {
     if (snakeTimer === 0 || isGameOver || isPause) return;
-    handleSnakeMovement();
+    onMovement();
   }, [snakeTimer]);
 
   useEffect(() => {
