@@ -1,5 +1,6 @@
 import type { Entity, Position } from "../../types/entities";
-import { sortEntitiesById, getSnakeParts } from "../snake";
+import { getSnakeParts } from "../game/get-snake-parts";
+import { sortEntitiesById } from "../game/sort-entities-by-id";
 
 export function handleSnakeBodyPosition(
   entities: Entity[],

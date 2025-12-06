@@ -53,13 +53,15 @@ export default function useGame(mode: GameMode) {
       direction
     );
 
-    setEntities(newEntities);
-    checkPointsOverlap(newHead.position);
+    checkPointsOverlap(newEntities, newHead.position);
     unlockControls();
   };
 
-  const checkPointsOverlap = (headPosition: Position) => {
-    const overlapEntity = checkOverlap(entities, headPosition);
+  const checkPointsOverlap = (entities: Entity[], headPosition: Position) => {
+    const overlapEntity = checkOverlap(
+      entities.filter((e) => e.id !== "snake-0"),
+      headPosition
+    );
 
     if (overlapEntity) {
       if (overlapEntity.type === "snake") {
@@ -70,6 +72,8 @@ export default function useGame(mode: GameMode) {
 
       setEntities(newEntities);
       setCount((prev) => prev + gameSettings.xpPerPoint);
+    } else {
+      setEntities(entities);
     }
   };
 
